@@ -1,4 +1,4 @@
-from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator
+from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
 MAX_TOKENS = 2048
 
@@ -10,13 +10,16 @@ def main(project_path="."):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path)
     all_files.reverse()  # As per the requirement, process files from least recent
-    
+
     # Generate initial context with all files' contents
     context = []
     for file in all_files:
         with open(file, "r") as f:
-            file_content = f.read()
+            file_content = f.read().splitlines()
+            # Replace every 8 spaces with a tab character in each line
+            file_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
         context.append({"filename": str(file), "file_content": file_content})
+
 
     # Check if context is within limits, if so, return early
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
@@ -43,7 +46,7 @@ def main(project_path="."):
     # Step 4: If context still doesn't fit, reduce context as a last resort
     if sum(total_tokens) > MAX_TOKENS:
         context = context_reducer.reduce_context(context)
-    
+
     # Generate the final prompts
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
 
