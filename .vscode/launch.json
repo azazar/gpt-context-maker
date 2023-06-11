@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "main.py",
             "args": [
-                "--copy"
+                "--copy",
+                "--max-tokens", "4096",
             ],
             "console": "integratedTerminal",
             "justMyCode": true
