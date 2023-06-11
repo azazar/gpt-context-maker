@@ -23,7 +23,7 @@ def load_settings(project_path):
             default_settings.update(loaded_settings)
     return default_settings
 
-def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclude_dirs=None):
+def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path, exclude_dirs)
     all_files.reverse()  # As per the requirement, process files from least recent
@@ -41,9 +41,7 @@ def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclu
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
     if sum(total_tokens) <= max_tokens:
         result = "\n".join(prompts)
-        if copy_to_clipboard:
-            pyperclip.copy(result)
-        return result
+        return result, sum(total_tokens)
 
     # Step 2: Remove comments
     for c in context:
@@ -52,9 +50,7 @@ def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclu
         prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
         if sum(total_tokens) <= max_tokens:
             result = "\n".join(prompts)
-            if copy_to_clipboard:
-                pyperclip.copy(result)
-            return result
+            return result, sum(total_tokens)
 
     # Step 3: Summarize
     for c in context:
@@ -64,9 +60,7 @@ def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclu
         prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
         if sum(total_tokens) <= max_tokens:
             result = "\n".join(prompts)
-            if copy_to_clipboard:
-                pyperclip.copy(result)
-            return result
+            return result, sum(total_tokens)
 
     # Step 4: If context still doesn't fit, reduce context as a last resort
     if sum(total_tokens) > max_tokens:
@@ -76,10 +70,7 @@ def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclu
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
     result = "\n".join(prompts)
 
-    if copy_to_clipboard:
-        pyperclip.copy(result)
-    
-    return result
+    return result, sum(total_tokens)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a GPT Context from a project.')
@@ -102,4 +93,11 @@ if __name__ == "__main__":
     # convert the comma-separated string into a set
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
 
-    print(main(path, settings['copy'], settings['max-tokens'], exclude_dirs))
+    result, tokens = main(path, settings['max-tokens'], exclude_dirs)
+
+    if settings['copy']:
+        pyperclip.copy(result)
+
+        print(f'Generated context copied to clipboard ({tokens} tokens)')
+    else:
+        print(result)
