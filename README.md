@@ -6,13 +6,29 @@ The tool reads files from your project directory (excluding those specified in .
 
 ## How to Use
 
+### Command Line Arguments
 You can use the GPT Context Maker with command line arguments. The tool accepts the following arguments:
 
 - `--path`: The path to your project directory. If no path is provided, the current directory is used.
 - `--copy`: An optional argument. If provided, the tool will copy the generated context to the clipboard.
-- `--max-tokens`: The maximum number of tokens allowed in the context. The default value is 4096.
-- `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. Default is none.
+- `--max-tokens`: The maximum number of tokens allowed in the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or 4096 if the setting is not specified.
+- `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or exclude none if the setting is not specified.
 
+### Configuration File
+You can also specify settings using a `.gptsettings.yml` file in your project directory. The tool will read this file if present and use these settings as default values, which can be overridden by command line arguments. The settings file can contain the following options:
+
+- `copy`: If set to `true`, the tool will copy the generated context to the clipboard.
+- `max-tokens`: The maximum number of tokens allowed in the context.
+- `exclude-dirs`: A comma-separated list of directories to exclude from the context.
+
+Example `.gptsettings.yml` file:
+```yml
+copy: true
+max-tokens: 4096
+exclude-dirs: test,logs
+```
+
+### Running the Tool
 To run the tool, execute the `main.py` script with the desired arguments. For example:
 
 ```bash
