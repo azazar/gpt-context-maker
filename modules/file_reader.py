@@ -3,7 +3,8 @@ from pathlib import Path
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
-IGNORE_DIRS = {'__pycache__', '.git', '.idea', '.vscode', 'node_modules', 'vendor', '.gitignore', '*.o', '*.exe', '*.dll', '*.so', '*.dylib', '*.class', '*.jar', '*.war', '*.pyc', '*.pyo', '*.rbc', '*.beam', '*.wasm'}
+IGNORE_DIRS = {'__pycache__', '.git', '.idea', '.vscode', 'node_modules', 'vendor'}
+IGNORE_FILES = {'*.o', '*.exe', '*.dll', '*.so', '*.dylib', '*.class', '*.jar', '*.war', '*.pyc', '*.pyo', '*.rbc', '*.beam', '*.wasm'}
 
 def read_gitignore(gitignore_path):
     gitignore = []
@@ -22,8 +23,9 @@ def read_all_code_files(project_path="."):
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]  # ignore directories in IGNORE_DIRS
         for file in files:
             file_path = Path(root) / file
-            if not spec.match_file(str(file_path)):
-                # Include files with .md, .txt, .py, .php, .js, .ts, .java, .c, .cpp, .cs, .swift extensions along with all files not in IGNORE_DIRS
+            # Exclude files that match the gitignore pattern or are in IGNORE_FILES
+            if not any(file_path.match(pattern) for pattern in IGNORE_FILES) and not spec.match_file(str(file_path)):
+                # Include files with .md, .txt, .py, .php, .js, .ts, .java, .c, .cpp, .cs, .swift extensions
                 if file_path.suffix in ['.py', '.php', '.js', '.ts', '.java', '.c', '.cpp', '.cs', '.swift', '.md', '.txt']:
                     all_files.append(file_path)
 

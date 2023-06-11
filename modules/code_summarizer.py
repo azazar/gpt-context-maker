@@ -3,7 +3,10 @@ from ast import parse, iter_fields, AST, Name, Constant, FunctionDef, Assign, Cl
 from pathlib import Path
 
 def summarize(code: str, filename: str) -> Dict[str, List[str]]:
-    tree = parse(code)
+    try:
+        tree = parse(code)
+    except SyntaxError as e:
+        return {"filename": filename, "error": f"SyntaxError: {e}"}
 
     def get_assign_targets(node):
         if isinstance(node, Name):

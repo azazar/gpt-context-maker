@@ -2,34 +2,51 @@ from modules import file_reader, code_summarizer, comment_filter, token_counter,
 
 MAX_TOKENS = 2048
 
+def generate_and_count_tokens(summary):
+    prompt = prompt_generator.generate_prompt(summary)
+    return prompt, token_counter.count_tokens(prompt)
+
 def main(project_path="."):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path)
+    all_files.reverse()  # As per the requirement, process files from least recent
     
-    # Step 2: Generate a summary for each file
-    summaries = []
+    # Generate initial context with all files' contents
+    context = []
     for file in all_files:
         with open(file, "r") as f:
             file_content = f.read()
+        context.append({"filename": str(file), "file_content": file_content})
 
-        # If file_content fits in context, append file content, otherwise append summary
-        if token_counter.count_tokens(file_content) <= MAX_TOKENS:
-            summaries.append({"filename": str(file), "file_content": file_content})
-        else:
-            # Step 3: Remove comments
-            no_comments = comment_filter.remove_comments(file_content)
-            
-            # Step 4: Summarize the code
-            summary = code_summarizer.summarize(no_comments, str(file))
-            summaries.append(summary)
+    # Check if context is within limits, if so, return early
+    prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
+    if sum(total_tokens) <= MAX_TOKENS:
+        return "\n".join(prompts)
 
-    # Step 5: Reduce the context if necessary
-    if sum(token_counter.count_tokens(s.get("file_content", "") + ''.join(s.values())) for s in summaries) > MAX_TOKENS:
-        summaries = context_reducer.reduce_context(summaries)
+    # Step 2: Remove comments
+    for c in context:
+        if "file_content" in c:
+            c["file_content"] = comment_filter.remove_comments(file, c["file_content"])
+        prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
+        if sum(total_tokens) <= MAX_TOKENS:
+            return "\n".join(prompts)
+
+    # Step 3: Summarize
+    for c in context:
+        if "file_content" in c:
+            summary = code_summarizer.summarize(c["file_content"], c["filename"])
+            c.update(summary)
+        prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
+        if sum(total_tokens) <= MAX_TOKENS:
+            return "\n".join(prompts)
+
+    # Step 4: If context still doesn't fit, reduce context as a last resort
+    if sum(total_tokens) > MAX_TOKENS:
+        context = context_reducer.reduce_context(context)
     
-    # Step 6: Generate the final prompts
-    prompts = [prompt_generator.generate_prompt(summary) if 'file_content' not in summary else f"# File: {summary['filename']}:\n```python\n{summary['file_content']}\n```" for summary in summaries]
-    
+    # Generate the final prompts
+    prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
+
     return "\n".join(prompts)
 
 if __name__ == "__main__":
