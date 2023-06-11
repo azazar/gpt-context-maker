@@ -11,7 +11,7 @@
             "program": "main.py",
             "args": [
                 "--copy",
-                "--max-tokens", "4096",
+                "--max-tokens", "2048",
             ],
             "console": "integratedTerminal",
             "justMyCode": true
