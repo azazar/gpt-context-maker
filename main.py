@@ -3,7 +3,7 @@ import sys
 import pyperclip
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
-MAX_TOKENS = 3333
+MAX_TOKENS = 4096
 
 def generate_and_count_tokens(summary):
     prompt = prompt_generator.generate_prompt(summary)
