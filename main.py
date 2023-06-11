@@ -4,7 +4,7 @@ import yaml
 import os
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
-MAX_TOKENS = 4096
+MAX_TOKENS = 2048
 
 def generate_and_count_tokens(summary):
     prompt = prompt_generator.generate_prompt(summary)
@@ -57,6 +57,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
         if "file_content" in c:
             summary = code_summarizer.summarize(c["file_content"], c["filename"])
             c.update(summary)
+            c.pop('file_content')
         prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
         if sum(total_tokens) <= max_tokens:
             result = "\n".join(prompts)
