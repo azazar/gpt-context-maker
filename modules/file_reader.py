@@ -3,7 +3,7 @@ from pathlib import Path
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
-IGNORE_DIRS = {'__pycache__', '.git', '.idea', '.vscode', 'node_modules', 'vendor'}
+IGNORE_DIRS = {'__pycache__', '.venv', '.git', '.idea', '.vscode', 'node_modules', 'vendor'}
 IGNORE_FILES = {'*.o', '*.exe', '*.dll', '*.so', '*.dylib', '*.class', '*.jar', '*.war', '*.pyc', '*.pyo', '*.rbc', '*.beam', '*.wasm'}
 
 def read_gitignore(gitignore_path):
