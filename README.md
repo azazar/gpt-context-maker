@@ -1,24 +1,24 @@
 # GPT Context Maker
 
-The GPT Context Maker is a Python-based tool designed to generate a concise and meaningful ChatGPT context for large projects. It supports projects written in various programming languages including Python, PHP and others. The purpose of the tool is to assist you in creating concise and effective prompts for OpenAI's ChatGPT model.
+The GPT Context Maker, created by Mikhail Yevchenko, is a Python-based tool built to generate compact and useful context for ChatGPT from large-scale projects. It supports an array of programming languages, including Python and PHP, and its main goal is to aid in generating efficient and relevant prompts for OpenAI's ChatGPT model.
 
-The tool works by reading files from your project directory (excluding those mentioned in .gitignore), counting the tokens in the context, removing comments to reduce the context size and taking further actions if necessary to ensure the context fits within the model's token limit.
+The tool operates by scanning files from your project directory (excluding those stated in .gitignore), counting tokens within the context, and removing comments to trim down the context size. If necessary, it takes further steps to ensure the context stays within the model's token limit.
 
-## How It Works - Step by Step Guide
+## Steps to Operation
 
-1. **Read all files from directory tree:** The tool scans the entire directory tree of your project, ignoring files that are mentioned in the .gitignore file.
+1. **Reading all files from directory tree:** The tool parses your project's complete directory tree, ignoring files as per the .gitignore file.
 
-2. **Count tokens in context:** After reading the files, the tool counts all the tokens in the context using the `tiktoken` library. This count is used to manage the size of the context.
+2. **Token counting in context:** Post file reading, the tool counts all tokens within the context using the `tiktoken` library. This count is essential for controlling the size of the context.
 
-3. **Remove comments:** To further reduce the context size, the tool removes all comments from the source code.
+3. **Comment removal:** Comments from the source code are eliminated to further downsize the context.
 
-4. **Reduce context size:** If the context is still too large to fit within the model's token limit, the tool will take additional actions to reduce its size. This includes truncating long summaries and prioritizing the inclusion of important code segments.
+4. **Context size reduction:** If the context exceeds the model's token limit, the tool implements additional actions to decrease its size, such as shortening lengthy summaries and giving priority to essential code segments.
 
-5. **Generate the final context:** Once the context is within the token limit, the tool generates the final context which includes the source code of each file or summaries for larger files.
+5. **Final context generation:** When the context is within the token limit, the tool generates the final context, which includes the source code or summaries for larger files.
 
 ## Installation
 
-To install the GPT Context Maker, clone the repository from GitHub and install the required Python packages:
+Clone the GitHub repository and install the necessary Python packages for GPT Context Maker installation:
 
 ```bash
 git clone https://github.com/azazar/gpt-context-maker.git
@@ -28,19 +28,25 @@ pip install -r requirements.txt
 
 ## Usage
 
-To use the GPT Context Maker, run the `main.py` file with your project directory as the argument:
+Run the `main.py` file with your project directory as the argument to use the GPT Context Maker:
 
 ```bash
 python main.py /path/to/your/project
 ```
 
-This will print the generated context to the standard output.
+The generated context is printed to the standard output.
+
+You can optionally add the `--copy` flag to copy the output to your clipboard:
+
+```bash
+python main.py /path/to/your/project --copy
+```
 
 ## Credits
 
-- **Azazar:** Project lead, responsible for engineering the prompts and overseeing the project development.
-- **OpenAI's GPT-4 Assistant:** Developed the initial step-by-step guide, proposed algorithms, created the Python project structure, and implemented the project's code.
+- **Mikhail Yevchenko:** Project lead, responsible for designing the prompts and managing the project's development.
+- **OpenAI's GPT-4 Assistant:** Contributed to the initial step-by-step guide, proposed algorithms, constructed the Python project structure, and implemented the project's code.
 
 ## License
 
-This project is released under the MIT License. For more details, see the `LICENSE` file in the project's root directory.
+This project is licensed under the MIT License. For more information, please refer to the `LICENSE` file in the project's root directory.

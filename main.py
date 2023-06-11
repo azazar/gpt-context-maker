@@ -1,12 +1,15 @@
+import argparse
+import sys
+import pyperclip
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
-MAX_TOKENS = 2048
+MAX_TOKENS = 3333
 
 def generate_and_count_tokens(summary):
     prompt = prompt_generator.generate_prompt(summary)
     return prompt, token_counter.count_tokens(prompt)
 
-def main(project_path="."):
+def main(project_path=".", copy_to_clipboard=False):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path)
     all_files.reverse()  # As per the requirement, process files from least recent
@@ -20,11 +23,13 @@ def main(project_path="."):
             file_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
         context.append({"filename": str(file), "file_content": file_content})
 
-
     # Check if context is within limits, if so, return early
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
     if sum(total_tokens) <= MAX_TOKENS:
-        return "\n".join(prompts)
+        result = "\n".join(prompts)
+        if copy_to_clipboard:
+            pyperclip.copy(result)
+        return result
 
     # Step 2: Remove comments
     for c in context:
@@ -32,7 +37,10 @@ def main(project_path="."):
             c["file_content"] = comment_filter.remove_comments(file, c["file_content"])
         prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
         if sum(total_tokens) <= MAX_TOKENS:
-            return "\n".join(prompts)
+            result = "\n".join(prompts)
+            if copy_to_clipboard:
+                pyperclip.copy(result)
+            return result
 
     # Step 3: Summarize
     for c in context:
@@ -41,7 +49,10 @@ def main(project_path="."):
             c.update(summary)
         prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
         if sum(total_tokens) <= MAX_TOKENS:
-            return "\n".join(prompts)
+            result = "\n".join(prompts)
+            if copy_to_clipboard:
+                pyperclip.copy(result)
+            return result
 
     # Step 4: If context still doesn't fit, reduce context as a last resort
     if sum(total_tokens) > MAX_TOKENS:
@@ -49,9 +60,17 @@ def main(project_path="."):
 
     # Generate the final prompts
     prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
+    result = "\n".join(prompts)
 
-    return "\n".join(prompts)
+    if copy_to_clipboard:
+        pyperclip.copy(result)
+    
+    return result
 
 if __name__ == "__main__":
-    import sys
-    print(main(sys.argv[1] if len(sys.argv) > 1 else "."))
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--path', default='.', help='Path to the project.')
+    parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
+    args = parser.parse_args()
+
+    print(main(args.path, args.copy))
