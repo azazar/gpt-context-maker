@@ -11,14 +11,15 @@ You can use the GPT Context Maker with command line arguments. The tool accepts 
 - `--path`: The path to your project directory. If no path is provided, the current directory is used.
 - `--copy`: An optional argument. If provided, the tool will copy the generated context to the clipboard.
 - `--max-tokens`: The maximum number of tokens allowed in the context. The default value is 4096.
+- `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. Default is none.
 
 To run the tool, execute the `main.py` script with the desired arguments. For example:
 
 ```bash
-python main.py --path /path/to/your/project --copy --max-tokens 4096
+python main.py --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs
 ```
 
-This command will read the files from the specified path, generate a context that fits within 4096 tokens, and copy the generated context to the clipboard. 
+This command will read the files from the specified path, excluding files in the 'test' and 'logs' directories, generate a context that fits within 4096 tokens, and copy the generated context to the clipboard.
 
 ## Installation
 
