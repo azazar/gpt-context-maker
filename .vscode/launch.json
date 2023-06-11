@@ -11,7 +11,8 @@
             "program": "main.py",
             "args": [
                 "--copy",
-                "--max-tokens", "2048",
+                "--max-tokens", "4096",
+                "--exclude-dirs", "test_project,tests"
             ],
             "console": "integratedTerminal",
             "justMyCode": true

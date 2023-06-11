@@ -8,9 +8,9 @@ def generate_and_count_tokens(summary):
     prompt = prompt_generator.generate_prompt(summary)
     return prompt, token_counter.count_tokens(prompt)
 
-def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS):
+def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Step 1: Read all files
-    all_files = file_reader.read_all_code_files(project_path)
+    all_files = file_reader.read_all_code_files(project_path, exclude_dirs)
     all_files.reverse()  # As per the requirement, process files from least recent
 
     # Generate initial context with all files' contents
@@ -71,6 +71,10 @@ if __name__ == "__main__":
     parser.add_argument('--path', default='.', help='Path to the project.')
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
     parser.add_argument('--max-tokens', type=int, default=MAX_TOKENS, help='Max tokens for the context.')
+    parser.add_argument('--exclude-dirs', default='', help='Comma-separated list of directories to exclude.')
     args = parser.parse_args()
 
-    print(main(args.path, args.copy, args.max_tokens))
+    # convert the comma-separated string into a set
+    exclude_dirs = set(args.exclude_dirs.split(',')) if args.exclude_dirs else None
+
+    print(main(args.path, args.copy, args.max_tokens, exclude_dirs))
