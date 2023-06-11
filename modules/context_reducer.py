@@ -10,7 +10,9 @@ def reduce_context(summaries, limit=2048):
     # Drop the largest summaries until we fit into the limit
     total_tokens = sum(count for count, _ in sorted_summaries)
     while total_tokens > limit and sorted_summaries:
-        total_tokens -= sorted_summaries.pop()[0]
+        removed_file_summary = sorted_summaries.pop()
+        total_tokens -= removed_file_summary[0]
+        print(f"WARNING: File '{removed_file_summary[1]['filename']}' was removed from context due to token limit.")
 
     # Return the reduced list of summaries
     return [summary for _, summary in sorted_summaries]
