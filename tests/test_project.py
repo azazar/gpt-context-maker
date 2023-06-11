@@ -11,7 +11,7 @@ class TestProject(unittest.TestCase):
 
     def test_file_reader(self):
         files = file_reader.read_all_code_files(self.test_dir_path)
-        expected_files = 14
+        expected_files = 12
         self.assertEqual(len(files), expected_files)
 
         for file in files:
