@@ -1,0 +1,3 @@
+copy: true
+max-tokens: 4096
+exclude-dirs: test_project,tests

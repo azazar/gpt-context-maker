@@ -9,11 +9,6 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
-            "args": [
-                "--copy",
-                "--max-tokens", "4096",
-                "--exclude-dirs", "test_project,tests"
-            ],
             "console": "integratedTerminal",
             "justMyCode": true
         }

@@ -1,5 +1,7 @@
 import argparse
 import pyperclip
+import yaml
+import os
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
 MAX_TOKENS = 4096
@@ -7,6 +9,19 @@ MAX_TOKENS = 4096
 def generate_and_count_tokens(summary):
     prompt = prompt_generator.generate_prompt(summary)
     return prompt, token_counter.count_tokens(prompt)
+
+def load_settings(project_path):
+    default_settings = {
+        'copy': False,
+        'max-tokens': MAX_TOKENS,
+        'exclude-dirs': ''
+    }
+    settings_path = os.path.join(project_path, '.gptsettings.yml')
+    if os.path.isfile(settings_path):
+        with open(settings_path, 'r') as f:
+            loaded_settings = yaml.safe_load(f)
+            default_settings.update(loaded_settings)
+    return default_settings
 
 def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Step 1: Read all files
@@ -68,13 +83,23 @@ def main(project_path=".", copy_to_clipboard=False, max_tokens=MAX_TOKENS, exclu
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a GPT Context from a project.')
-    parser.add_argument('--path', default='.', help='Path to the project.')
+    parser.add_argument('--path', default=None, help='Path to the project.')
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
-    parser.add_argument('--max-tokens', type=int, default=MAX_TOKENS, help='Max tokens for the context.')
-    parser.add_argument('--exclude-dirs', default='', help='Comma-separated list of directories to exclude.')
+    parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
+    parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
     args = parser.parse_args()
 
-    # convert the comma-separated string into a set
-    exclude_dirs = set(args.exclude_dirs.split(',')) if args.exclude_dirs else None
+    path = args.path if args.path else '.'
 
-    print(main(args.path, args.copy, args.max_tokens, exclude_dirs))
+    # load settings
+    settings = load_settings(path)
+
+    # CLI arguments should override the settings if provided
+    settings['copy'] = args.copy if args.copy else settings['copy']
+    settings['max-tokens'] = args.max_tokens if args.max_tokens else settings['max-tokens']
+    settings['exclude-dirs'] = args.exclude_dirs if args.exclude_dirs else settings['exclude-dirs']
+
+    # convert the comma-separated string into a set
+    exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
+
+    print(main(path, settings['copy'], settings['max-tokens'], exclude_dirs))
