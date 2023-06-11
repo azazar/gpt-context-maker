@@ -1,55 +1,37 @@
-from modules import (
-    file_reader, 
-    token_counter, 
-    comment_filter, 
-    code_summarizer, 
-    context_reducer, 
-    prompt_generator
-)
+from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator
 
-MAX_TOKENS = 2048  # Define a limit for tokens
+MAX_TOKENS = 2048
 
 def main(project_path="."):
-    # Step 1: Read files
-    code_files = file_reader.read_all_code_files(project_path)
-
-    # Step 2: Summarize or store file contents
+    # Step 1: Read all files
+    all_files = file_reader.read_all_code_files(project_path)
+    
+    # Step 2: Generate a summary for each file
     summaries = []
-    for file_path in code_files:
-        try:
-            with open(file_path, "r") as f:
-                file_content = f.read()
-        except UnicodeDecodeError:
-            print(f"Warning: File {file_path} couldn't be read due to encoding issues. Skipping this file.")
-            continue
+    for file in all_files:
+        with open(file, "r") as f:
+            file_content = f.read()
 
-        token_count = token_counter.count_tokens(file_content)
-        if token_count > MAX_TOKENS:
-            file_content = comment_filter.remove_comments(file_content)
-            token_count = token_counter.count_tokens(file_content)  # Count tokens again after removing comments
-
-            # Summarize the file if token count is still too large
-            if token_count > MAX_TOKENS:
-                summary = code_summarizer.summarize(file_content, str(file_path))
-                summaries.append(summary)
+        # If file_content fits in context, append file content, otherwise append summary
+        if token_counter.count_tokens(file_content) <= MAX_TOKENS:
+            summaries.append({"filename": str(file), "file_content": file_content})
         else:
-            summaries.append({"filename": str(file_path), "file_content": file_content})
+            # Step 3: Remove comments
+            no_comments = comment_filter.remove_comments(file_content)
+            
+            # Step 4: Summarize the code
+            summary = code_summarizer.summarize(no_comments, str(file))
+            summaries.append(summary)
 
-    # Step 3: Reduce context size if needed
-    total_token_count = sum(token_counter.count_tokens(s.get("file_content", "") + ''.join(s.values())) for s in summaries)
-    if total_token_count > MAX_TOKENS:
+    # Step 5: Reduce the context if necessary
+    if sum(token_counter.count_tokens(s.get("file_content", "") + ''.join(s.values())) for s in summaries) > MAX_TOKENS:
         summaries = context_reducer.reduce_context(summaries)
-
-    # Step 4: Generate full GPT prompts
-    prompts = [
-        prompt_generator.generate_prompt(summary) 
-        if 'file_content' not in summary 
-        else f"# File: {summary['filename']}:\n```python\n{summary['file_content']}\n```" 
-        for summary in summaries
-    ]
-
-    return '\n'.join(prompts)
-
+    
+    # Step 6: Generate the final prompts
+    prompts = [prompt_generator.generate_prompt(summary) if 'file_content' not in summary else f"# File: {summary['filename']}:\n```python\n{summary['file_content']}\n```" for summary in summaries]
+    
+    return "\n".join(prompts)
 
 if __name__ == "__main__":
-    print(main())
+    import sys
+    print(main(sys.argv[1] if len(sys.argv) > 1 else "."))
