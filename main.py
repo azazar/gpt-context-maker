@@ -26,7 +26,9 @@ def load_settings(project_path):
 def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path, exclude_dirs)
-    all_files.reverse()  # As per the requirement, process files from least recent
+
+    # Sort files by modification time, from oldest to newest
+    all_files.sort(key=os.path.getmtime)
 
     # Generate initial context with all files' contents
     context = []
