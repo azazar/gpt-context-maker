@@ -1,13 +1,13 @@
-def generate_prompt(summary):
-    if any(key in summary for key in ['variables', 'functions', 'classes', 'extra_code']):
+def generate_prompt(context):
+    if any(key in context for key in ['variables', 'functions', 'classes', 'extra_code']):
         sections = {
-            "Variables": summary.get("variables", []),
-            "Functions": summary.get("functions", []),
-            "Classes": summary.get("classes", []),
-            "Extra code": summary.get("extra_code", ""),
+            "Variables": context.get("variables", []),
+            "Functions": context.get("functions", []),
+            "Classes": context.get("classes", []),
+            "Extra code": context.get("extra_code", ""),
         }
 
-        prompt = f"## File {summary['filename']}\n"  # Add "File " prefix to the filename
+        prompt = f"## File {context['filename']}\n"  # Add "File " prefix to the filename
         for section, items in sections.items():
             if items:  # Only append the section if it is not empty
                 items_str = "\n".join(items) if isinstance(items, list) else items
@@ -15,7 +15,7 @@ def generate_prompt(summary):
 
         return prompt
 
-    if "reduced_content" in summary:
-        return f"## File {summary['filename']}\n```\n{summary['reduced_content']}\n```"
+    if "reduced_content" in context:
+        return f"## File {context['filename']}\n```\n{context['reduced_content']}\n```"
 
-    return f"## File {summary['filename']}\n```\n{summary['file_content']}\n```"
+    return f"## File {context['filename']}\n```\n{context['file_content']}\n```"
