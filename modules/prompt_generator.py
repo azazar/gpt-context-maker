@@ -7,7 +7,7 @@ def generate_prompt(summary):
             "Extra code": summary.get("extra_code", ""),
         }
 
-        prompt = f"# File: {summary['filename']}:\n"  # Add "File: " prefix to the filename
+        prompt = f"#### File {summary['filename']}\n"  # Add "File " prefix to the filename
         for section, items in sections.items():
             if items:  # Only append the section if it is not empty
                 items_str = "\n".join(items) if isinstance(items, list) else items
@@ -16,6 +16,6 @@ def generate_prompt(summary):
         return prompt
 
     if "reduced_content" in summary:
-        return f"# File: {summary['filename']}:\n```\n{summary['reduced_content']}\n```"
+        return f"#### File {summary['filename']}\n```\n{summary['reduced_content']}\n```"
 
-    return f"# File: {summary['filename']}:\n```\n{summary['file_content']}\n```"
+    return f"#### File {summary['filename']}\n```\n{summary['file_content']}\n```"
