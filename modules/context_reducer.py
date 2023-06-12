@@ -1,6 +1,6 @@
 from modules import token_counter
 
-def reduce_context(summaries, limit=2048):
+def reduce_context(summaries, max_tokens=2048):
     # Get token count for each summary
     token_counts = [(token_counter.count_tokens(s.get("file_content", "") + ''.join([item for sublist in [v if isinstance(v, list) else [v] for v in s.values()] for item in sublist])), s) for s in summaries]
 
@@ -9,7 +9,7 @@ def reduce_context(summaries, limit=2048):
 
     # Drop the largest summaries until we fit into the limit
     total_tokens = sum(count for count, _ in sorted_summaries)
-    while total_tokens > limit and sorted_summaries:
+    while total_tokens > max_tokens and sorted_summaries:
         removed_file_summary = sorted_summaries.pop()
         total_tokens -= removed_file_summary[0]
         print(f"WARNING: File '{removed_file_summary[1]['filename']}' was removed from context due to token limit.")
