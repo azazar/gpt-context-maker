@@ -45,7 +45,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Check if context is within limits, if so, return early
     prompt, total_tokens = generate_and_count_tokens(context)
     if total_tokens <= max_tokens:
-        return prompt, sum(total_tokens)
+        return prompt, total_tokens
 
     # Step 2: Remove comments
     for c in context:
@@ -54,7 +54,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
 
             prompt, total_tokens = generate_and_count_tokens(context)
             if total_tokens <= max_tokens:
-                return prompt, sum(total_tokens)
+                return prompt, total_tokens
 
     # Step 3: Summarize
     for c in context:
@@ -74,7 +74,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
     # Generate the final prompts
     prompt, total_tokens = generate_and_count_tokens(context)
 
-    return prompt, sum(total_tokens)
+    return prompt, total_tokens
 
 
 if __name__ == "__main__":
