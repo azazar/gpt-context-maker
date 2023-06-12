@@ -20,7 +20,7 @@ DEFAULT_REQUIREMENTS = """
 3. **Performance**: Code should be efficient, optimized, and minimize unnecessary calculations. Include specific performance benchmarks if necessary.
 4. **Security**: Anticipate and address common security issues, validate and sanitize user input. Provide examples of potential security risks if needed.
 5. **Quality**: Ensure adherence to SOLID, KISS, and YAGNI principles in the generated code.
-"""
+""".strip()
 
 def generate_prmompt_and_count_tokens(context, prepend_text=""):
     prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
@@ -123,10 +123,10 @@ def main_cli():
     prompt = []
     
     if 'prompt' in settings and len(settings['prompt']) > 0:
-        prompt.append(settings['prompt'])
+        prompt.append(settings['prompt'].strip())
 
     if 'requirements' in settings and len(settings['requirements']) > 0:
-        prompt.append(settings['requirements'])
+        prompt.append(settings['requirements'].strip())
 
     result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, "\n\n".join(prompt).strip())
 
