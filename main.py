@@ -4,11 +4,11 @@ import yaml
 import os
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
-MAX_TOKENS = 2048
+MAX_TOKENS = 3072
 
-def generate_and_count_tokens(context):
+def generate_and_count_tokens(context, prepend_text=""):
     prompts = [prompt_generator.generate_prompt(summary) for summary in context]
-    prompt = "\n".join(prompts)
+    prompt = (prepend_text.strip() + "\n\n" + "\n".join(prompts)).strip()
     return prompt, token_counter.count_tokens(prompt)
 
 def load_settings(project_path):
@@ -16,7 +16,8 @@ def load_settings(project_path):
         'copy': False,
         'max-tokens': MAX_TOKENS,
         'exclude-dirs': '',
-        'include-keywords': ''  # Added include-keywords in the default settings
+        'include-keywords': '',
+        'prompt': ''  # Added prompt in the default settings
     }
     settings_path = os.path.join(project_path, '.gptsettings.yml')
     if os.path.isfile(settings_path):
@@ -25,7 +26,7 @@ def load_settings(project_path):
             default_settings.update(loaded_settings)
     return default_settings
 
-def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None):  # include_keywords parameter added
+def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None, prepend_text=""):  # include_keywords and prepend_text parameter added
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path, exclude_dirs, include_keywords)  # include_keywords argument added
     
@@ -44,7 +45,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
             context.append({"filename": str(file), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
-    prompt, total_tokens = generate_and_count_tokens(context)
+    prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
     if total_tokens <= max_tokens:
         return prompt, total_tokens
 
@@ -53,7 +54,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
         if "reduced_content" in c:
             c["reduced_content"] = comment_filter.remove_comments(file, c["reduced_content"])
 
-            prompt, total_tokens = generate_and_count_tokens(context)
+            prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
             if total_tokens <= max_tokens:
                 return prompt, total_tokens
 
@@ -64,7 +65,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
             c.update(summary)
             c.pop('reduced_content')
 
-            prompt, total_tokens = generate_and_count_tokens(context)
+            prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
             if total_tokens <= max_tokens:
                 return prompt, total_tokens
 
@@ -73,7 +74,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
         context = context_reducer.reduce_context(context, max_tokens)
 
     # Generate the final prompts
-    prompt, total_tokens = generate_and_count_tokens(context)
+    prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
 
     return prompt, total_tokens
 
@@ -85,6 +86,7 @@ if __name__ == "__main__":
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
     parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')  # New argument for include-keywords
+    parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')  # New argument for prepend text
     args = parser.parse_args()
 
     path = args.path if args.path else '.'
@@ -97,12 +99,13 @@ if __name__ == "__main__":
     settings['max-tokens'] = args.max_tokens if args.max_tokens else settings['max-tokens']
     settings['exclude-dirs'] = args.exclude_dirs if args.exclude_dirs else settings['exclude-dirs']
     settings['include-keywords'] = args.include_keywords if args.include_keywords else settings['include-keywords']  # New setting for include-keywords
+    settings['prompt'] = args.prompt if args.prompt else settings['prompt']  # New setting for prepend text
 
     # convert the comma-separated string into a set
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
     include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None  # New conversion for include-keywords
 
-    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords)  # include_keywords added to main function call
+    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, settings['prompt'])  # include_keywords and prepend_text added to main function call
 
     print("Total Tokens: ", tokens)
 

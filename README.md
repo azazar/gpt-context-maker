@@ -1,12 +1,10 @@
 # GPT Context Maker
 
-GPT Context Maker is a Python-based tool designed to generate a meaningful context for large projects, suitable for use with Open AI's ChatGPT model. It supports a variety of programming languages, including Python, PHP, and more.
+GPT Context Maker is a Python-based tool that intelligently generates a context from a provided project. It's designed for compatibility with Open AI's ChatGPT model, suitable for large software projects across various programming languages, including Python, PHP, and more.
 
-The tool reads files from your project directory (excluding those specified in .gitignore), counts tokens in the context, removes comments to reduce the context size, and takes additional steps if necessary to ensure the context fits within the token limit.
+The tool generates a context by analyzing your project files, prioritizing recent changes, removing comments, and taking additional steps as necessary to ensure the context fits within a predefined token limit.
 
 ## Installation
-
-To install the GPT Context Maker, follow these steps:
 
 1. Clone the repository:
 
@@ -14,66 +12,69 @@ To install the GPT Context Maker, follow these steps:
     git clone https://github.com/azazar/gpt-context-maker.git
     ```
 
-2. Navigate into the project directory:
+2. Navigate into the cloned directory:
 
     ```bash
     cd gpt-context-maker
     ```
 
-3. Install the package:
+3. Install the package using pip:
 
     ```bash
     pip install .
     ```
 
-This will install the `gpt-context-maker` command-line tool on your system.
+## Usage
 
-## How to Use
+The GPT Context Maker can be used either through command-line arguments or by creating a `.gptsettings.yml` configuration file in your project directory.
 
-You can use the GPT Context Maker with command line arguments. The tool accepts the following arguments:
+Here are the available command-line arguments:
 
-- `--path`: The path to your project directory. If no path is provided, the current directory is used.
-- `--copy`: An optional argument. If provided, the tool will copy the generated context to the clipboard.
-- `--max-tokens`: The maximum number of tokens allowed in the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or 4096 if the setting is not specified.
-- `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or exclude none if the setting is not specified.
-- `--include-keywords`: An optional argument that accepts a comma-separated list of keywords to filter included files. If no value is provided, it will use the default value from the `.gptsettings.yml` or include all files if the setting is not specified.
+- `--path` (Optional): Path to your project directory. Defaults to the current directory if not specified.
+- `--copy` (Optional): If included, the tool will copy the generated context to the clipboard.
+- `--max-tokens` (Optional): The maximum number of tokens allowed in the context. Defaults to 3072 if not specified.
+- `--exclude-dirs` (Optional): A comma-separated list of directories to exclude from the context.
+- `--include-keywords` (Optional): A comma-separated list of keywords to filter included files.
+- `--prompt` (Optional): Text to prepend to the generated context.
 
-To run the tool, you can use the `gpt-context-maker` command with the desired arguments. For example:
-
-```bash
-gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2
-```
-
-`test` and `logs` directories, generate a context, and copy the context to the clipboard. Only files that contain 'key1' or 'key2' in their names are included.
-
-The context is also printed to the console, so if you prefer not to copy it to the clipboard, you can omit the `--copy` argument.
-
-For example:
+Example of a command-line usage:
 
 ```bash
-gpt-context-maker --path /path/to/your/project --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2
+gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2 --prompt "Fix this function"
 ```
 
-This will do the same as the previous command, but the context will not be copied to the clipboard.
+The above command instructs the tool to generate a context from the project located at `/path/to/your/project`, excluding files from `test` and `logs`
+
+ directories. It will filter files to include only those that contain 'key1' or 'key2' in their names, prepend the context with "Fix this function" and copy the resulting context to the clipboard.
 
 ## Settings
 
-You can customize the behavior of the GPT Context Maker by creating a `.gptsettings.yml` file in your project directory. The file can include the following settings:
-
-- `maxTokens`: The maximum number of tokens allowed in the context. Defaults to 4096 if not specified.
-- `excludeDirs`: A list of directories to exclude from the context. Defaults to an empty list if not specified.
-
-Here is an example of a `.gptsettings.yml` file:
+If you prefer not to use command-line arguments, you can create a `.gptsettings.yml` file in your project directory with the same configuration options:
 
 ```yaml
-maxTokens: 4096
-excludeDirs:
-  - test
-  - logs
+copy: false
+max-tokens: 4096
+exclude-dirs: "test,logs"
+include-keywords: "main,py"
+prompt: |
+  Here are project files for the context. Wait for instructions.
 ```
 
-This file specifies that the maximum number of tokens in the context is 4096 and that files in the `test` and `logs` directories should be excluded from the context.
+Please note that any command-line arguments will override the respective settings from the `.gptsettings.yml` file.
 
 ## Contribution
 
-Contributions are welcome! Feel free to submit a pull request.
+Your contributions are most welcome! Here are the steps to contribute:
+
+1. Fork this repository.
+2. Create a new branch in your forked repository.
+3. Make changes in your new branch.
+4. Create a pull request.
+
+Ensure that your code adheres to the existing style for consistency.
+
+## Output
+
+The output of the GPT Context Maker is a summarized context of your code, suitable for input into the OpenAI GPT-3 model. The context is generated by intelligently summarizing and filtering your codebase while prioritizing recent changes. If the `--copy` argument is used or `copy: true` is set in the `.gptsettings.yml` file, this context is also copied to your clipboard.
+
+If you have any issues or suggestions, please open an issue in this repository. Happy coding!
