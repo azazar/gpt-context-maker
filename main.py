@@ -6,19 +6,21 @@ from modules import file_reader, code_summarizer, comment_filter, token_counter,
 
 MAX_TOKENS = 3072
 DEFAULT_REQUIREMENTS = """
-# Output Standards
-1. Specify the filename before producing code.
-2. Substitute triple backticks with "~~~" to prevent Markdown conflict.
-3. For large file changes, offer a diff-style patch code compatible with the patch utility. Don't create diffs if the full file text is shared without cuts. For renaming or copying files, provide a bash script.
-4. Keep responses short and forgo explanations due to size restrictions. Let the code clearly illustrate your point.
-5. Exclude explanations from the generated code, which should be incorporated into the project without changes.
-6. Comply with all guidelines and instructions.
+# Output Rules
+1. Specify the file name at the beginning of your coding task.
+2. Enclose code blocks with "~~~" to prevent Markdown rendering issues.
+3. When modifying extensive files, formulate diff-compatible patches. If you're sharing the entire file content, the diff is not necessary.
+4. Due to the character limit, responses should be brief and to-the-point. The code should be self-explanatory.
+5. The final output code should be free of comments and prepared for immediate implementation into the project.
+6. Strictly adhere to all provided instructions, coding principles and project rules.
 
-# Important Principles
-1. **Maintainability**: The code must be legible, compartmentalized, and well-documented. Follow accepted style guides. Use meaningful names for variables and methods. Ensure the generated code adheres to SOLID, KISS, DRY, and YAGNI principles.
-2. **Testability**: Develop the code in easily testable units with robust error handling.
-3. **Performance**: Code must be efficient, optimized, and minimize unnecessary computations.
-4. **Security**: Predict and tackle common security threats, validate and sanitize user input. Highlight possible security vulnerabilities if needed.
+# Key Coding Principles
+1. **Maintainability**: Construct code that is clear, modular, and adheres to the chosen style guide. Use meaningful names for variables and functions. Your code should follow SOLID, KISS, DRY, and YAGNI principles.
+2. **Testability**: The code segments you create should be easy to test and capable of handling errors.
+3. **Performance**: The code must be efficient, optimized, and devoid of unnecessary calculations or operations.
+4. **Security**: Always consider potential security risks, make sure to sanitize user input data. Highlight possible security risks if identified.
+5. **Design Patterns**: Use recognized design patterns when appropriate to improve code maintainability and readability.
+6. **Self-review and Metrics**: Analyze your code to identify potential improvements or flaws. Compute code metrics such as cyclomatic complexity, code duplication, and lines of code.
 """.strip()
 
 def generate_prmompt_and_count_tokens(context, prepend_text=""):
