@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="gpt-context-maker",
-    version="0.1",
+    version="0.2-SNAPSHOT",
     packages=find_packages(),
     entry_points={
         'console_scripts': [
