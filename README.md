@@ -4,9 +4,32 @@ GPT Context Maker is a Python-based tool designed to generate a meaningful conte
 
 The tool reads files from your project directory (excluding those specified in .gitignore), counts tokens in the context, removes comments to reduce the context size, and takes additional steps if necessary to ensure the context fits within the token limit.
 
+## Installation
+
+To install the GPT Context Maker, follow these steps:
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/azazar/gpt-context-maker.git
+    ```
+
+2. Navigate into the project directory:
+
+    ```bash
+    cd gpt-context-maker
+    ```
+
+3. Install the package:
+
+    ```bash
+    pip install .
+    ```
+
+This will install the `gpt-context-maker` command-line tool on your system.
+
 ## How to Use
 
-### Command Line Arguments
 You can use the GPT Context Maker with command line arguments. The tool accepts the following arguments:
 
 - `--path`: The path to your project directory. If no path is provided, the current directory is used.
@@ -14,43 +37,42 @@ You can use the GPT Context Maker with command line arguments. The tool accepts 
 - `--max-tokens`: The maximum number of tokens allowed in the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or 4096 if the setting is not specified.
 - `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or exclude none if the setting is not specified.
 
-### Configuration File
-You can also specify settings using a `.gptsettings.yml` file in your project directory. The tool will read this file if present and use these settings as default values, which can be overridden by command line arguments. The settings file can contain the following options:
-
-- `copy`: If set to `true`, the tool will copy the generated context to the clipboard.
-- `max-tokens`: The maximum number of tokens allowed in the context.
-- `exclude-dirs`: A comma-separated list of directories to exclude from the context.
-
-Example `.gptsettings.yml` file:
-```yml
-copy: true
-max-tokens: 4096
-exclude-dirs: test,logs
-```
-
-### Running the Tool
-To run the tool, execute the `main.py` script with the desired arguments. For example:
+To run the tool, you can use the `gpt-context-maker` command with the desired arguments. For example:
 
 ```bash
-python main.py --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs
+gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs
 ```
 
-This command will read the files from the specified path, excluding files in the 'test' and 'logs' directories, generate a context that fits within 4096 tokens, and copy the generated context to the clipboard.
+`test` and `logs` directories, generate a context, and copy the context to the clipboard.
 
-## Installation
+The context is also printed to the console, so if you prefer not to copy it to the clipboard, you can omit the `--copy` argument.
 
-To install the GPT Context Maker, clone the repository and install the required Python packages:
+For example:
 
 ```bash
-git clone https://github.com/azazar/gpt-context-maker.git
-cd gpt-context-maker
-pip install -r requirements.txt
+gpt-context-maker --path /path/to/your/project --max-tokens 4096 --exclude-dirs test,logs
 ```
 
-## Credits
+This will do the same as the previous command, but the context will not be copied to the clipboard.
 
-This tool was developed by Mikhail Yevchenko and OpenAI's GPT-4 Assistant, which proposed algorithms, created the project structure, and implemented the project's code.
+## Settings
 
-## License
+You can customize the behavior of the GPT Context Maker by creating a `.gptsettings.yml` file in your project directory. The file can include the following settings:
 
-This project is licensed under the terms of the MIT License. See the `LICENSE` file for more information.
+- `maxTokens`: The maximum number of tokens allowed in the context. Defaults to 4096 if not specified.
+- `excludeDirs`: A list of directories to exclude from the context. Defaults to an empty list if not specified.
+
+Here is an example of a `.gptsettings.yml` file:
+
+```yaml
+maxTokens: 4096
+excludeDirs:
+  - test
+  - logs
+```
+
+This file specifies that the maximum number of tokens in the context is 4096 and that files in the `test` and `logs` directories should be excluded from the context.
+
+## Contribution
+
+Contributions are welcome! Feel free to submit a pull request.
