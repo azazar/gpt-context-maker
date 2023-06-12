@@ -18,3 +18,30 @@ def convert_spaces_to_tabs_in_iterable(iterable, space_count=8):
     :return: The iterable with spaces in each element replaced with tabs.
     """
     return [convert_spaces_to_tabs(i, space_count) for i in iterable]
+
+def convert_spaces_to_tabs_python(code_string):
+    lines = code_string.split('\n')  # Split the code into lines
+
+    # Determine the number of spaces per indentation level
+    indentation = ''
+    for char in lines[0]:
+        if char == ' ':
+            indentation += ' '
+        else:
+            break
+    if len(indentation) == 0:
+        return code_string  # No spaces found, return the original code unchanged
+
+    # Replace spaces with tabs
+    converted_lines = []
+    for line in lines:
+        if line.startswith(indentation):
+            # Replace spaces with tabs using the expandtabs() method
+            converted_lines.append(line.replace(indentation, '\t'))
+        else:
+            converted_lines.append(line)  # Preserve lines without indentation
+
+    # Join the lines back into a single string
+    converted_code = '\n'.join(converted_lines)
+
+    return converted_code

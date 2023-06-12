@@ -35,7 +35,10 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
     for file in all_files:
         with open(file, "r") as f:
             file_content = f.read().splitlines()
-            reduced_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
+            if file.suffix == '.py':
+                reduced_content = space_to_tab_converter.convert_spaces_to_tabs_python("\n".join(file_content))
+            else:
+                reduced_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
             context.append({"filename": str(file), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
