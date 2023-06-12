@@ -6,8 +6,9 @@ from modules import file_reader, code_summarizer, comment_filter, token_counter,
 
 MAX_TOKENS = 2048
 
-def generate_and_count_tokens(summary):
-    prompt = prompt_generator.generate_prompt(summary)
+def generate_and_count_tokens(context):
+    prompts = [prompt_generator.generate_prompt(summary) for summary in context]
+    prompt = "\n".join(prompts)
     return prompt, token_counter.count_tokens(prompt)
 
 def load_settings(project_path):
@@ -42,19 +43,18 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
             context.append({"filename": str(file), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
-    prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
-    if sum(total_tokens) <= max_tokens:
-        result = "\n".join(prompts)
-        return result, sum(total_tokens)
+    prompt, total_tokens = generate_and_count_tokens(context)
+    if total_tokens <= max_tokens:
+        return prompt, sum(total_tokens)
 
     # Step 2: Remove comments
     for c in context:
         if "reduced_content" in c:
             c["reduced_content"] = comment_filter.remove_comments(file, c["reduced_content"])
-        prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
-        if sum(total_tokens) <= max_tokens:
-            result = "\n".join(prompts)
-            return result, sum(total_tokens)
+
+            prompt, total_tokens = generate_and_count_tokens(context)
+            if total_tokens <= max_tokens:
+                return prompt, sum(total_tokens)
 
     # Step 3: Summarize
     for c in context:
@@ -62,20 +62,20 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
             summary = code_summarizer.summarize(c["file_content"], c["filename"])
             c.update(summary)
             c.pop('reduced_content')
-        prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
-        if sum(total_tokens) <= max_tokens:
-            result = "\n".join(prompts)
-            return result, sum(total_tokens)
+
+            prompt, total_tokens = generate_and_count_tokens(context)
+            if total_tokens <= max_tokens:
+                return prompt, total_tokens
 
     # Step 4: If context still doesn't fit, reduce context as a last resort
-    if sum(total_tokens) > max_tokens:
-        context = context_reducer.reduce_context(context)
+    if total_tokens > max_tokens:
+        context = context_reducer.reduce_context(context, max_tokens)
 
     # Generate the final prompts
-    prompts, total_tokens = zip(*[generate_and_count_tokens(c) for c in context])
-    result = "\n".join(prompts)
+    prompt, total_tokens = generate_and_count_tokens(context)
 
-    return result, sum(total_tokens)
+    return prompt, sum(total_tokens)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a GPT Context from a project.')
