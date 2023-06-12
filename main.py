@@ -5,6 +5,22 @@ import os
 from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
 
 MAX_TOKENS = 3072
+DEFAULT_REQUIREMENTS = """
+# Output Requirements
+1. Before generating code, specify the filename.
+2. Replace in-code triple backticks with "~~~" to avoid Markdown conflict.
+3. For file modifications, provide diff-style patch code in a format that can be used with the patch utility (include a patch command example) unless you generate a whole file. For file renaming, provide a bash script.
+4. Keep replies brief and avoid explanations due to size limits. Use code to provide clear explanations.
+5. Keep explanation outside of generated code. It's supposed to be added into the project without modifications.
+6. All requirements and guidelines must be followed.
+
+# Critical Guidelines
+1. **Maintainability**: Code should be clear, modular, and well-documented. Follow industry-standard style guides. Use meaningful names for variables and methods.
+2. **Testability**: Write the code in easily testable units with robust error handling. Specify the test framework and required coverage level.
+3. **Performance**: Code should be efficient, optimized, and minimize unnecessary calculations. Include specific performance benchmarks if necessary.
+4. **Security**: Anticipate and address common security issues, validate and sanitize user input. Provide examples of potential security risks if needed.
+5. **Quality**: Ensure adherence to SOLID, KISS, and YAGNI principles in the generated code.
+"""
 
 def generate_prmompt_and_count_tokens(context, prepend_text=""):
     prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
@@ -18,7 +34,7 @@ def load_settings(project_path):
         'exclude-dirs': '',
         'include-keywords': '',
         'prompt': '',
-        'requirements': '',
+        'requirements': DEFAULT_REQUIREMENTS,
     }
     settings_path = os.path.join(project_path, '.gptsettings.yml')
     if os.path.isfile(settings_path):
