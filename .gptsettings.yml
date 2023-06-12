@@ -2,7 +2,7 @@ copy: true
 max-tokens: 3072
 exclude-dirs: test_project
 include-keywords: py,README
-prompt: |
+requirements: |
   # Output Requirements
   1. Before generating code, specify the filename.
   2. Replace in-code triple backticks with "~~~" to avoid Markdown conflict.
