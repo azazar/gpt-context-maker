@@ -6,9 +6,10 @@ prompt: |
   # Output Requirements
   1. Before generating code, specify the filename.
   2. Replace in-code triple backticks with "~~~" to avoid Markdown conflict.
-  3. For file modifications, provide diff-style patch code in a format that can be used with the patch utility (include a patch command example). For file renaming, provide a bash script.
+  3. For file modifications, provide diff-style patch code in a format that can be used with the patch utility (include a patch command example) unless you generate a whole file. For file renaming, provide a bash script.
   4. Keep replies brief and avoid explanations due to size limits. Use code to provide clear explanations.
-  5. All requirements and guidelines must be followed.
+  5. Keep explanation outside of generated code. It's supposed to be added into the project without modifications.
+  6. All requirements and guidelines must be followed.
 
   # Critical Guidelines
   1. **Maintainability**: Code should be clear, modular, and well-documented. Follow industry-standard style guides. Use meaningful names for variables and methods.

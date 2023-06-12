@@ -17,7 +17,8 @@ def load_settings(project_path):
         'max-tokens': MAX_TOKENS,
         'exclude-dirs': '',
         'include-keywords': '',
-        'prompt': ''  # Added prompt in the default settings
+        'prompt': '',
+        'requirements': '',
     }
     settings_path = os.path.join(project_path, '.gptsettings.yml')
     if os.path.isfile(settings_path):
@@ -26,9 +27,9 @@ def load_settings(project_path):
             default_settings.update(loaded_settings)
     return default_settings
 
-def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None, prepend_text=""):  # include_keywords and prepend_text parameter added
+def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None, prepend_text=""):
     # Step 1: Read all files
-    all_files = file_reader.read_all_code_files(project_path, exclude_dirs, include_keywords)  # include_keywords argument added
+    all_files = file_reader.read_all_code_files(project_path, exclude_dirs, include_keywords)
     
     # Sort files by modification time, from oldest to newest
     all_files.sort(key=os.path.getmtime)
@@ -42,7 +43,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
                 reduced_content = space_to_tab_converter.convert_spaces_to_tabs_python("\n".join(file_content))
             else:
                 reduced_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
-            context.append({"filename": str(file), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
+            context.append({"filename": os.path.relpath(str(file), project_path), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
     prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
@@ -87,6 +88,7 @@ def main_cli():
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
     parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')
     parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')
+    parser.add_argument('--requirements', default=None, help='Text to append to the generated context.')
     args = parser.parse_args()
 
     path = args.path if args.path else '.'
@@ -97,11 +99,20 @@ def main_cli():
     settings['exclude-dirs'] = args.exclude_dirs if args.exclude_dirs else settings['exclude-dirs']
     settings['include-keywords'] = args.include_keywords if args.include_keywords else settings['include-keywords']
     settings['prompt'] = args.prompt if args.prompt else settings['prompt']
+    settings['requirements'] = args.requirements if args.requirements else settings['requirements']
 
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
     include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None
+    
+    prompt = []
+    
+    if 'prompt' in settings and len(settings['prompt']) > 0:
+        prompt.append(settings['prompt'])
 
-    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, settings['prompt'])
+    if 'requirements' in settings and len(settings['requirements']) > 0:
+        prompt.append(settings['requirements'])
+
+    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, "\n\n".join(prompt).strip())
 
     print("Total Tokens: ", tokens)
 

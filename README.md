@@ -36,11 +36,17 @@ Here are the available command-line arguments:
 - `--exclude-dirs` (Optional): A comma-separated list of directories to exclude from the context.
 - `--include-keywords` (Optional): A comma-separated list of keywords to filter included files.
 - `--prompt` (Optional): Text to prepend to the generated context.
+- `--requirements` (Optional): Text to append to the generated context.
 
 Example of a command-line usage:
 
 ```bash
-gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2 --prompt "Fix this function"
+gpt-context-maker \
+    --path /path/to/your/project \
+    --copy --max-tokens 4096 \
+    --exclude-dirs test,logs \
+    --include-keywords key1,key2 \
+    --prompt "Find issues in project"
 ```
 
 The above command instructs the tool to generate a context from the project located at `/path/to/your/project`, excluding files from `test` and `logs` directories. It will filter files to include only those that contain 'key1' or 'key2' in their names, prepend the context with "Fix this function" and copy the resulting context to the clipboard.
@@ -148,6 +154,21 @@ exclude-dirs: "test,logs"
 include-keywords: "main,py"
 prompt: |
   Here are project files for the context. Wait for instructions.
+requirements: |
+  # Output Requirements
+  1. Before generating code, specify the filename.
+  2. Replace in-code triple backticks with "~~~" to avoid Markdown conflict.
+  3. For file modifications, provide diff-style patch code in a format that can be used with the patch utility (include a patch command example) unless you generate a whole file. For file renaming, provide a bash script.
+  4. Keep replies brief and avoid explanations due to size limits. Use code to provide clear explanations.
+  5. Keep explanation outside of generated code. It's supposed to be added into the project without modifications.
+  6. All requirements and guidelines must be followed.
+
+  # Critical Guidelines
+  1. **Maintainability**: Code should be clear, modular, and well-documented. Follow industry-standard style guides. Use meaningful names for variables and methods.
+  2. **Testability**: Write the code in easily testable units with robust error handling. Specify the test framework and required coverage level.
+  3. **Performance**: Code should be efficient, optimized, and minimize unnecessary calculations. Include specific performance benchmarks if necessary.
+  4. **Security**: Anticipate and address common security issues, validate and sanitize user input. Provide examples of potential security risks if needed.
+  5. **Quality**: Ensure adherence to SOLID, KISS, and YAGNI principles in the generated code.
 ```
 
 Please note that any command-line arguments will override the respective settings from the `.gptsettings.yml` file.
