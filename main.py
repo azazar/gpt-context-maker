@@ -6,8 +6,8 @@ from modules import file_reader, code_summarizer, comment_filter, token_counter,
 
 MAX_TOKENS = 3072
 
-def generate_and_count_tokens(context, prepend_text=""):
-    prompts = [prompt_generator.generate_prompt(summary) for summary in context]
+def generate_prmompt_and_count_tokens(context, prepend_text=""):
+    prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
     prompt = (prepend_text.strip() + "\n\n" + "\n".join(prompts)).strip()
     return prompt, token_counter.count_tokens(prompt)
 
@@ -45,7 +45,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
             context.append({"filename": str(file), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
-    prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
+    prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
     if total_tokens <= max_tokens:
         return prompt, total_tokens
 
@@ -54,7 +54,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
         if "reduced_content" in c:
             c["reduced_content"] = comment_filter.remove_comments(file, c["reduced_content"])
 
-            prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
+            prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
             if total_tokens <= max_tokens:
                 return prompt, total_tokens
 
@@ -65,7 +65,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
             c.update(summary)
             c.pop('reduced_content')
 
-            prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
+            prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
             if total_tokens <= max_tokens:
                 return prompt, total_tokens
 
@@ -74,7 +74,7 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
         context = context_reducer.reduce_context(context, max_tokens)
 
     # Generate the final prompts
-    prompt, total_tokens = generate_and_count_tokens(context, prepend_text)
+    prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
 
     return prompt, total_tokens
 

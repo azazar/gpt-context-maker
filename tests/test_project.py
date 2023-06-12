@@ -51,7 +51,7 @@ class TestProject(unittest.TestCase):
     def test_prompt_generator(self):
         summaries = [{"filename": str(file), "file_content": file.read_text(), "variables": [], "functions": [], "classes": [], "extra_code": []} for file in file_reader.read_all_code_files(self.project_path)]
         for summary in summaries:
-            prompt = prompt_generator.generate_prompt(summary)
+            prompt = prompt_generator.create_prompt_from_context(summary)
             self.assertTrue(len(prompt) > 0)
 
             # Test if the filename is included in the prompt

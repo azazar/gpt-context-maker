@@ -1,4 +1,4 @@
-def generate_prompt(context):
+def create_prompt_from_context(context):
     if any(key in context for key in ['variables', 'functions', 'classes', 'extra_code']):
         sections = {
             "Variables": context.get("variables", []),
