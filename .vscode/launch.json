@@ -11,6 +11,15 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": true
-        }
+        },
+        {
+            "name": "Python: gpt-context-maker",
+            "type": "python",
+            "python": "/usr/bin/python3",
+            "request": "launch",
+            "program": "~/.local/bin/gpt-context-maker",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
     ]
 }
