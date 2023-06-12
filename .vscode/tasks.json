@@ -4,10 +4,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Install",
+            "label": "Re/install",
             "type": "shell",
             "command": "deactivate; pip install --editable .",
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "Uninstall",
+            "type": "shell",
+            "command": "deactivate; pip uninstall gpt-context-maker",
+            "problemMatcher": []
+        },
     ]
 }
