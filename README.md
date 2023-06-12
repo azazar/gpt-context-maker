@@ -43,9 +43,99 @@ Example of a command-line usage:
 gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2 --prompt "Fix this function"
 ```
 
-The above command instructs the tool to generate a context from the project located at `/path/to/your/project`, excluding files from `test` and `logs`
+The above command instructs the tool to generate a context from the project located at `/path/to/your/project`, excluding files from `test` and `logs` directories. It will filter files to include only those that contain 'key1' or 'key2' in their names, prepend the context with "Fix this function" and copy the resulting context to the clipboard.
 
- directories. It will filter files to include only those that contain 'key1' or 'key2' in their names, prepend the context with "Fix this function" and copy the resulting context to the clipboard.
+### Usage with Visual Studio Code
+
+You can integrate GPT Context Maker with Visual Studio Code using tasks and keybindings for a more seamless experience. Here's how to set it up:
+
+1. Open your user `tasks.json` file in Visual Studio Code. If it does not exist, you will need to create it. You can access it by opening the command palette `Ctrl+Shift+P`, and type `Tasks: Open User Tasks`.
+
+2. Add the following task configurations to the `tasks.json` file:
+
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate GPT Context from current workspace with filtering",
+            "type": "shell",
+            "command": "gpt-context-maker",
+            "args": [
+                "--path",
+                "${workspaceFolder}",
+                "--prompt",
+                "${input:inputPrompt}",
+                "--include-keywords",
+                "${input:includeKeywords}",
+                "--copy"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "none",
+            },
+            "presentation": {
+                "revealProblems": "onProblem"
+            }
+        },
+        {
+            "label": "Generate GPT Context from current workspace",
+            "type": "shell",
+            "command": "gpt-context-maker",
+            "args": [
+                "--path",
+                "${workspaceFolder}",
+                "--copy"
+            ],
+           
+
+ "problemMatcher": [],
+            "group": {
+                "kind": "none",
+            },
+            "presentation": {
+                "revealProblems": "onProblem"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputPrompt",
+            "type": "promptString",
+            "description": "Provide a prompt."
+        },
+        {
+            "id": "includeKeywords",
+            "type": "promptString",
+            "description": "Comma-separated list of keywords to include.",
+            "default": ""
+        }
+    ]
+}
+```
+
+3. Update your user keybindings file (`keybindings.json`). You can access it by opening the command palette `Ctrl+Shift+P`, and type `Preferences: Open Keyboard Shortcuts (JSON)`.
+
+```json
+[
+    {
+        "key": "ctrl+shift+g",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Generate GPT Context from current workspace with filtering"
+    },
+    {
+        "key": "alt+g",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Generate GPT Context from current workspace"
+    }
+]
+```
+
+With these settings, you can generate a context for your current workspace with filtering by pressing `Ctrl+Shift+G` and without filtering by pressing `Alt+G`. You will be prompted to input a prompt and keywords when using the `Ctrl+Shift+G` shortcut.
+
+### Troubleshooting
+
+If you encounter any problems while running the tasks, check the 'Problems' tab in VSCode for any error messages. If the issue persists, ensure that the `gpt-context-maker` command is correctly installed and accessible in your PATH.
 
 ## Settings
 
