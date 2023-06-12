@@ -1,6 +1,13 @@
 copy: true
 max-tokens: 3072
 exclude-dirs: test_project
-include-keywords: main,README
+include-keywords: py,README
 prompt: |
-  Here are project files for the context. Wait for instructions.
+  # Critical Guidelines
+  Ensure the generated code strictly follows SOLID, KISS, and YAGNI principles. It must adhere to these important considerations:
+  - **Maintainability**: The code must be easy to comprehend, modular, adhere to industry-standard style guides, be well-commented, and have meaningful names.
+  - **Testability**: The code must be organized into small, testable units, handle errors effectively, and include associated unit tests.
+  - **Performance**: Code must be efficient, make optimal use of built-in functionalities and data structures, and avoid unnecessary computations.
+  - **Security**: Code must avoid common security issues, properly validate and sanitize user input.
+
+  Given are the project files for context. Await further instructions for specific tasks.
