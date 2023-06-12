@@ -124,14 +124,14 @@ You can integrate GPT Context Maker with Visual Studio Code using tasks and keyb
         "args": "Generate GPT Context from current workspace with filtering"
     },
     {
-        "key": "alt+g",
+        "key": "alt+shift+g",
         "command": "workbench.action.tasks.runTask",
         "args": "Generate GPT Context from current workspace"
     }
 ]
 ```
 
-With these settings, you can generate a context for your current workspace with filtering by pressing `Ctrl+Shift+G` and without filtering by pressing `Alt+G`. You will be prompted to input a prompt and keywords when using the `Ctrl+Shift+G` shortcut.
+With these settings, you can generate a context for your current workspace with filtering by pressing `Ctrl+Shift+G` and without filtering by pressing `Alt+Shift+G`. You will be prompted to input a prompt and keywords when using the `Ctrl+Shift+G` shortcut.
 
 ### Troubleshooting
 
