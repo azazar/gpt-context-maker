@@ -25,7 +25,7 @@ def summarize(code: str, filename: str) -> Dict[str, List[str]]:
                   [(get_assign_targets(node.targets), node.value)
                    for node in cls.body if isinstance(node, Assign)]]
         methods = [summarize_function(func) for func in cls.body if isinstance(func, FunctionDef)]
-        return f"### `{cls.name}` Fields\n" + '\n'.join(fields) + "\n### `{cls.name}` Functions\n" + '\n'.join(methods)
+        return f"#### `{cls.name}` Fields\n" + '\n'.join(fields) + "\n#### `{cls.name}` Functions\n" + '\n'.join(methods)
 
     def summarize_assign(node: Assign) -> str:
         if isinstance(node.value, Constant):  # Constant value like: x = 1 or x = "string"
