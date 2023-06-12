@@ -17,7 +17,7 @@ def summarize(code: str, filename: str) -> Dict[str, List[str]]:
 
     def summarize_function(func: FunctionDef) -> str:
         args = ', '.join(arg.arg for arg in func.args.args)
-        return f"  - {func.name}({args})"
+        return f"- {func.name}({args})"
 
     def summarize_class(cls: ClassDef) -> str:
         fields = [f"- {get_assign_targets(target)} = {value.value} ..."
