@@ -15,7 +15,8 @@ def load_settings(project_path):
     default_settings = {
         'copy': False,
         'max-tokens': MAX_TOKENS,
-        'exclude-dirs': ''
+        'exclude-dirs': '',
+        'include-keywords': ''  # Added include-keywords in the default settings
     }
     settings_path = os.path.join(project_path, '.gptsettings.yml')
     if os.path.isfile(settings_path):
@@ -24,9 +25,9 @@ def load_settings(project_path):
             default_settings.update(loaded_settings)
     return default_settings
 
-def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None):
+def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None):  # include_keywords parameter added
     # Step 1: Read all files
-    all_files = file_reader.read_all_code_files(project_path, exclude_dirs)
+    all_files = file_reader.read_all_code_files(project_path, exclude_dirs, include_keywords)  # include_keywords argument added
     
     # Sort files by modification time, from oldest to newest
     all_files.sort(key=os.path.getmtime)
@@ -83,6 +84,7 @@ if __name__ == "__main__":
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
+    parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')  # New argument for include-keywords
     args = parser.parse_args()
 
     path = args.path if args.path else '.'
@@ -94,15 +96,17 @@ if __name__ == "__main__":
     settings['copy'] = args.copy if args.copy else settings['copy']
     settings['max-tokens'] = args.max_tokens if args.max_tokens else settings['max-tokens']
     settings['exclude-dirs'] = args.exclude_dirs if args.exclude_dirs else settings['exclude-dirs']
+    settings['include-keywords'] = args.include_keywords if args.include_keywords else settings['include-keywords']  # New setting for include-keywords
 
     # convert the comma-separated string into a set
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
+    include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None  # New conversion for include-keywords
 
-    result, tokens = main(path, settings['max-tokens'], exclude_dirs)
+    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords)  # include_keywords added to main function call
+
+    print("Total Tokens: ", tokens)
 
     if settings['copy']:
         pyperclip.copy(result)
-
-        print(f'Generated context copied to clipboard ({tokens} tokens)')
     else:
         print(result)

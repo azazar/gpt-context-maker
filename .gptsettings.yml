@@ -1,3 +1,11 @@
+# Whether to copy the context to clipboard
 copy: true
+
+# Maximum number of tokens for the context
 max-tokens: 3072
-exclude-dirs: test_project,tests
+
+# Directories to exclude
+exclude-dirs: test_project
+
+# Keywords to include
+include-keywords: py,md

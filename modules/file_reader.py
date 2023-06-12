@@ -15,7 +15,7 @@ def read_ignore_files(ignore_file_paths):
 
     return [line.strip() for line in ignore_patterns]
 
-def read_all_code_files(project_path=".", additional_ignore_dirs=None):
+def read_all_code_files(project_path=".", additional_ignore_dirs=None, include_keywords=None):
     # Combine the default and additional ignore directories
     ignore_dirs = DEFAULT_IGNORE_DIRS.union(additional_ignore_dirs if additional_ignore_dirs else {})
 
@@ -32,6 +32,10 @@ def read_all_code_files(project_path=".", additional_ignore_dirs=None):
             if not any(file_path.match(pattern) for pattern in DEFAULT_IGNORE_FILES) and not spec.match_file(str(file_path)):
                 # Include files with .md, .txt, .py, .php, .js, .ts, .java, .c, .cpp, .cs, .swift extensions
                 if file_path.suffix in ['.py', '.php', '.js', '.ts', '.java', '.c', '.cpp', '.cs', '.swift', '.md', '.txt']:
-                    all_files.append(file_path)
+                    if include_keywords is not None:
+                        if any(keyword in str(file_path) for keyword in include_keywords):
+                            all_files.append(file_path)
+                    else:
+                        all_files.append(file_path)
 
     return all_files

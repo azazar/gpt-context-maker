@@ -36,21 +36,22 @@ You can use the GPT Context Maker with command line arguments. The tool accepts 
 - `--copy`: An optional argument. If provided, the tool will copy the generated context to the clipboard.
 - `--max-tokens`: The maximum number of tokens allowed in the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or 4096 if the setting is not specified.
 - `--exclude-dirs`: An optional argument that accepts a comma-separated list of directories to exclude from the context. If no value is provided, it will use the default value from the `.gptsettings.yml` or exclude none if the setting is not specified.
+- `--include-keywords`: An optional argument that accepts a comma-separated list of keywords to filter included files. If no value is provided, it will use the default value from the `.gptsettings.yml` or include all files if the setting is not specified.
 
 To run the tool, you can use the `gpt-context-maker` command with the desired arguments. For example:
 
 ```bash
-gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs
+gpt-context-maker --path /path/to/your/project --copy --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2
 ```
 
-`test` and `logs` directories, generate a context, and copy the context to the clipboard.
+`test` and `logs` directories, generate a context, and copy the context to the clipboard. Only files that contain 'key1' or 'key2' in their names are included.
 
 The context is also printed to the console, so if you prefer not to copy it to the clipboard, you can omit the `--copy` argument.
 
 For example:
 
 ```bash
-gpt-context-maker --path /path/to/your/project --max-tokens 4096 --exclude-dirs test,logs
+gpt-context-maker --path /path/to/your/project --max-tokens 4096 --exclude-dirs test,logs --include-keywords key1,key2
 ```
 
 This will do the same as the previous command, but the context will not be copied to the clipboard.
