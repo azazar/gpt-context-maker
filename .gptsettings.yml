@@ -3,11 +3,16 @@ max-tokens: 3072
 exclude-dirs: test_project
 include-keywords: py,README
 prompt: |
-  # Critical Guidelines
-  Ensure the generated code strictly follows SOLID, KISS, and YAGNI principles. It must adhere to these important considerations:
-  - **Maintainability**: The code must be easy to comprehend, modular, adhere to industry-standard style guides, be well-commented, and have meaningful names.
-  - **Testability**: The code must be organized into small, testable units, handle errors effectively, and include associated unit tests.
-  - **Performance**: Code must be efficient, make optimal use of built-in functionalities and data structures, and avoid unnecessary computations.
-  - **Security**: Code must avoid common security issues, properly validate and sanitize user input.
+  # Output Requirements
+  1. Before generating code, specify the filename.
+  2. Replace in-code triple backticks with "~~~" to avoid Markdown conflict.
+  3. For file modifications, provide diff-style patch code in a format that can be used with the patch utility (include a patch command example). For file renaming, provide a bash script.
+  4. Keep replies brief and avoid explanations due to size limits. Use code to provide clear explanations.
+  5. All requirements and guidelines must be followed.
 
-  Given are the project files for context. Await further instructions for specific tasks.
+  # Critical Guidelines
+  1. **Maintainability**: Code should be clear, modular, and well-documented. Follow industry-standard style guides. Use meaningful names for variables and methods.
+  2. **Testability**: Write the code in easily testable units with robust error handling. Specify the test framework and required coverage level.
+  3. **Performance**: Code should be efficient, optimized, and minimize unnecessary calculations. Include specific performance benchmarks if necessary.
+  4. **Security**: Anticipate and address common security issues, validate and sanitize user input. Provide examples of potential security risks if needed.
+  5. **Quality**: Ensure adherence to SOLID, KISS, and YAGNI principles in the generated code.
