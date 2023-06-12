@@ -54,4 +54,9 @@ def summarize(code: str, filename: str) -> Dict[str, List[str]]:
             summary["classes"].append(summarize_class(node))
         elif isinstance(node, If) and isinstance(node.test, Name) and node.test.id == "__name__":
             summary["extra_code"] = "\n".join(code.split("\n")[node.lineno-1:node.end_lineno])
+
+    # If no elements were found, return a default summary
+    if not any(summary.values()):
+        summary["extra_code"] = "No variables, functions, or classes found to summarize."
+
     return summary
