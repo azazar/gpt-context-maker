@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'gpt-context-maker = main:main',
+            'gpt-context-maker = main:main_cli',
         ],
     },
     install_requires=[

@@ -79,33 +79,29 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
     return prompt, total_tokens
 
 
-if __name__ == "__main__":
+def main_cli():
     parser = argparse.ArgumentParser(description='Generate a GPT Context from a project.')
     parser.add_argument('--path', default=None, help='Path to the project.')
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
-    parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')  # New argument for include-keywords
-    parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')  # New argument for prepend text
+    parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')
+    parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')
     args = parser.parse_args()
 
     path = args.path if args.path else '.'
-
-    # load settings
     settings = load_settings(path)
 
-    # CLI arguments should override the settings if provided
     settings['copy'] = args.copy if args.copy else settings['copy']
     settings['max-tokens'] = args.max_tokens if args.max_tokens else settings['max-tokens']
     settings['exclude-dirs'] = args.exclude_dirs if args.exclude_dirs else settings['exclude-dirs']
-    settings['include-keywords'] = args.include_keywords if args.include_keywords else settings['include-keywords']  # New setting for include-keywords
-    settings['prompt'] = args.prompt if args.prompt else settings['prompt']  # New setting for prepend text
+    settings['include-keywords'] = args.include_keywords if args.include_keywords else settings['include-keywords']
+    settings['prompt'] = args.prompt if args.prompt else settings['prompt']
 
-    # convert the comma-separated string into a set
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
-    include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None  # New conversion for include-keywords
+    include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None
 
-    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, settings['prompt'])  # include_keywords and prepend_text added to main function call
+    result, tokens = main(path, settings['max-tokens'], exclude_dirs, include_keywords, settings['prompt'])
 
     print("Total Tokens: ", tokens)
 
@@ -113,3 +109,7 @@ if __name__ == "__main__":
         pyperclip.copy(result)
     else:
         print(result)
+
+
+if __name__ == "__main__":
+    main_cli()
