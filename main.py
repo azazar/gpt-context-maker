@@ -6,13 +6,14 @@ from modules import file_reader, code_summarizer, comment_filter, token_counter,
 
 MAX_TOKENS = 3072
 DEFAULT_REQUIREMENTS = """
+Strictly adhere to all output rules and coding principles below.
+
 # Output Rules
 1. Specify the file name at the beginning of your coding task.
 2. Enclose code blocks with "~~~" to prevent Markdown rendering issues.
 3. When modifying extensive files, formulate diff-compatible patches. If you're sharing the entire file content, the diff is not necessary.
 4. Due to the character limit, responses should be brief and to-the-point. The code should be self-explanatory.
 5. The final output code should be free of comments and prepared for immediate implementation into the project.
-6. Strictly adhere to all provided instructions, coding principles and project rules.
 
 # Key Coding Principles
 1. **Maintainability**: Construct code that is clear, modular, and adheres to the chosen style guide. Use meaningful names for variables and functions. Your code should follow SOLID, KISS, DRY, and YAGNI principles.
