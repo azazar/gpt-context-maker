@@ -4,20 +4,20 @@ exclude-dirs: test_project
 include-keywords: py,README
 prompt: |
   Find issues in code below and fix the most important one.
-requirements: |
-  Strictly adhere to all output rules and coding principles below.
+# requirements: |
+#   Strictly adhere to all output rules and coding principles below.
 
-  # Output Rules
-  1. Specify the file name at the beginning of your coding task.
-  2. Enclose code blocks with "~~~" to prevent Markdown rendering issues.
-  3. When modifying extensive files, formulate diff-compatible patches. If you're sharing the entire file content, the diff is not necessary.
-  4. Due to the character limit, responses should be brief and to-the-point. The code should be self-explanatory.
-  5. The final output code should be free of comments and prepared for immediate implementation into the project.
+#   # Output Rules
+#   1. Specify the file name at the beginning of your coding task.
+#   2. Enclose code blocks with "~~~" to prevent Markdown rendering issues.
+#   3. When modifying extensive files, formulate diff-compatible patches. If you're sharing the entire file content, the diff is not necessary.
+#   4. Due to the character limit, responses should be brief and to-the-point. The code should be self-explanatory.
+#   5. The final output code should be free of comments and prepared for immediate implementation into the project.
 
-  # Key Coding Principles
-  1. **Maintainability**: Construct code that is clear, modular, and adheres to the chosen style guide. Use meaningful names for variables and functions. Your code should follow SOLID, KISS, DRY, and YAGNI principles.
-  2. **Testability**: The code segments you create should be easy to test and capable of handling errors.
-  3. **Performance**: The code must be efficient, optimized, and devoid of unnecessary calculations or operations.
-  4. **Security**: Always consider potential security risks, make sure to sanitize user input data. Highlight possible security risks if identified.
-  5. **Design Patterns**: Use recognized design patterns when appropriate to improve code maintainability and readability.
-  6. **Self-review and Metrics**: Analyze your code to identify potential improvements or flaws. Compute code metrics such as cyclomatic complexity, code duplication, and lines of code.
+#   # Key Coding Principles
+#   1. **Maintainability**: Construct code that is clear, modular, and adheres to the chosen style guide. Use meaningful names for variables and functions. Your code should follow SOLID, KISS, DRY, and YAGNI principles.
+#   2. **Testability**: The code segments you create should be easy to test and capable of handling errors.
+#   3. **Performance**: The code must be efficient, optimized, and devoid of unnecessary calculations or operations.
+#   4. **Security**: Always consider potential security risks, make sure to sanitize user input data. Highlight possible security risks if identified.
+#   5. **Design Patterns**: Use recognized design patterns when appropriate to improve code maintainability and readability.
+#   6. **Self-review and Metrics**: Analyze your code to identify potential improvements or flaws. Compute code metrics such as cyclomatic complexity, code duplication, and lines of code.
