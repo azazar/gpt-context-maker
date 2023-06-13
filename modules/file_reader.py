@@ -4,7 +4,9 @@ from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 
 DEFAULT_IGNORE_DIRS = {'__pycache__', '.venv', '.git', '.idea', '.vscode', 'node_modules', 'vendor'}
-DEFAULT_IGNORE_FILES = {'*.o', '*.exe', '*.dll', '*.so', '*.dylib', '*.class', '*.jar', '*.war', '*.pyc', '*.pyo', '*.rbc', '*.beam', '*.wasm'}
+DEFAULT_IGNORE_FILES = {'*.o', '*.exe', '*.dll', '*.so', '*.dylib', '*.class',
+                        '*.jar', '*.war', '*.pyc', '*.pyo', '*.rbc', '*.beam', '*.wasm'}
+
 
 def load_ignore_file_paths(ignore_file_paths):
     ignore_patterns = []
@@ -14,6 +16,7 @@ def load_ignore_file_paths(ignore_file_paths):
                 ignore_patterns += file.readlines()
 
     return [line.strip() for line in ignore_patterns]
+
 
 def read_all_code_files(project_path=".", additional_ignore_dirs=None, include_keywords=None):
     # Combine the default and additional ignore directories

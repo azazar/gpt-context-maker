@@ -23,10 +23,12 @@ DEFAULT_REQUIREMENTS = """
 6. **Self-review and Metrics**: Analyze your code to identify potential improvements or flaws. Compute code metrics such as cyclomatic complexity, code duplication, and lines of code.
 """.strip()
 
+
 def generate_prmompt_and_count_tokens(context, prepend_text=""):
     prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
     prompt = (prepend_text.strip() + "\n\n" + "\n".join(prompts)).strip()
     return prompt, token_counter.count_tokens(prompt)
+
 
 def load_settings(project_path):
     default_settings = {
@@ -44,13 +46,14 @@ def load_settings(project_path):
             default_settings.update(loaded_settings)
     return default_settings
 
+
 def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_keywords=None, prepend_text=""):
     # Step 1: Read all files
     all_files = file_reader.read_all_code_files(project_path, exclude_dirs, include_keywords)
-    
+
     # Sort files by modification time, from oldest to newest
     all_files.sort(key=os.path.getmtime)
-    
+
     # Generate initial context with all files' contents
     context = []
     for file in all_files:
@@ -60,7 +63,8 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
                 reduced_content = space_to_tab_converter.convert_spaces_to_tabs_python("\n".join(file_content))
             else:
                 reduced_content = "\n".join(space_to_tab_converter.convert_spaces_to_tabs_in_iterable(file_content))
-            context.append({"filename": os.path.relpath(str(file), project_path), "file_content": "\n".join(file_content), "reduced_content": reduced_content})
+            context.append({"filename": os.path.relpath(str(file), project_path),
+                           "file_content": "\n".join(file_content), "reduced_content": reduced_content})
 
     # Check if context is within limits, if so, return early
     prompt, total_tokens = generate_prmompt_and_count_tokens(context, prepend_text)
@@ -103,7 +107,8 @@ def main_cli():
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
-    parser.add_argument('--include-keywords', default=None, help='Comma-separated list of keywords to filter included files.')
+    parser.add_argument('--include-keywords', default=None,
+                        help='Comma-separated list of keywords to filter included files.')
     parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')
     parser.add_argument('--requirements', default=None, help='Text to append to the generated context.')
     args = parser.parse_args()
@@ -120,9 +125,9 @@ def main_cli():
 
     exclude_dirs = set(settings['exclude-dirs'].split(',')) if settings['exclude-dirs'] else None
     include_keywords = set(settings['include-keywords'].split(',')) if settings['include-keywords'] else None
-    
+
     prompt = []
-    
+
     if 'prompt' in settings and len(settings['prompt']) > 0:
         prompt.append(settings['prompt'].strip())
 

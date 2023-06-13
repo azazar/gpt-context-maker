@@ -9,6 +9,7 @@ def convert_spaces_to_tabs(line: str, space_count=8) -> str:
     spaces = " " * space_count
     return line.replace(spaces, "\t")
 
+
 def convert_spaces_to_tabs_in_iterable(iterable, space_count=8):
     """
     Apply convert_spaces_to_tabs function to each element of an iterable.
@@ -18,6 +19,7 @@ def convert_spaces_to_tabs_in_iterable(iterable, space_count=8):
     :return: The iterable with spaces in each element replaced with tabs.
     """
     return [convert_spaces_to_tabs(i, space_count) for i in iterable]
+
 
 def convert_spaces_to_tabs_python(code_string):
     lines = code_string.split('\n')  # Split the code into lines

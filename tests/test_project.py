@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from modules import file_reader, comment_filter, token_counter, code_summarizer, context_reducer, prompt_generator
 
+
 class TestProject(unittest.TestCase):
 
     def setUp(self):
@@ -39,7 +40,8 @@ class TestProject(unittest.TestCase):
                 self.assertGreater(original_tokens, tokens)
 
     def test_context_reducer(self):
-        summaries = [{"file_content": file.read_text(), "variables": [], "functions": [], "classes": [], "extra_code": []} for file in file_reader.read_all_code_files(self.project_path)]
+        summaries = [{"file_content": file.read_text(), "variables": [], "functions": [], "classes": [], "extra_code": []}
+                     for file in file_reader.read_all_code_files(self.project_path)]
         reduced_context = context_reducer.reduce_context(summaries)
         self.assertTrue(len(reduced_context) > 0)
 
@@ -49,13 +51,15 @@ class TestProject(unittest.TestCase):
         self.assertLessEqual(reduced_tokens, original_tokens)
 
     def test_prompt_generator(self):
-        summaries = [{"filename": str(file), "file_content": file.read_text(), "variables": [], "functions": [], "classes": [], "extra_code": []} for file in file_reader.read_all_code_files(self.project_path)]
+        summaries = [{"filename": str(file), "file_content": file.read_text(), "variables": [], "functions": [], "classes": [
+        ], "extra_code": []} for file in file_reader.read_all_code_files(self.project_path)]
         for summary in summaries:
             prompt = prompt_generator.create_prompt_from_context(summary)
             self.assertTrue(len(prompt) > 0)
 
             # Test if the filename is included in the prompt
             self.assertIn(summary["filename"], prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

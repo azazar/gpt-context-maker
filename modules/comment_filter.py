@@ -2,6 +2,7 @@ import re
 import tokenize
 import io
 
+
 def remove_comments_python(source_code):
     io_obj = io.StringIO(source_code)
     out = ""
@@ -34,6 +35,7 @@ def remove_comments_python(source_code):
         last_lineno = end_line
 
     return out
+
 
 def remove_comments(file, content):
     file_string = ''.join(content)
