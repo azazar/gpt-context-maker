@@ -15,7 +15,6 @@ def remove_comments_python(source_code):
         token_string = tok[1]
         start_line, start_col = tok[2]
         end_line, end_col = tok[3]
-        ltext = tok[4]
 
         if start_line > last_lineno:
             last_col = 0

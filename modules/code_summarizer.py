@@ -1,6 +1,5 @@
 from typing import Dict, List
-from ast import parse, iter_fields, AST, Name, Constant, FunctionDef, Assign, ClassDef, If
-from pathlib import Path
+from ast import parse, Name, Constant, FunctionDef, Assign, ClassDef, If
 
 
 def summarize(code: str, filename: str) -> Dict[str, List[str]]:
