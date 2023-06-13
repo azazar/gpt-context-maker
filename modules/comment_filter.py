@@ -35,11 +35,7 @@ def remove_comments_python(source_code):
 
     return out
 
-def remove_comments(file, content=None):
-    if content is None:
-        with open(file, "r") as f:
-            content = f.readlines()
-
+def remove_comments(file, content):
     file_string = ''.join(content)
 
     if file.suffix == '.py':
