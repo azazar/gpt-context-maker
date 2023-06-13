@@ -2,7 +2,7 @@ import argparse
 import pyperclip
 import yaml
 import os
-from modules import file_reader, code_summarizer, comment_filter, token_counter, prompt_generator, space_to_tab_converter
+from . import file_reader, code_summarizer, comment_filter, token_counter, prompt_generator, space_to_tab_converter
 
 MAX_TOKENS = 3072
 DEFAULT_PROMPT = "Here are some project details and other requirements. Wait for further instructions."

@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="gpt-context-maker",
-    version="0.2",
+    version="0.2.1",
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'gpt-context-maker = main:main_cli',
+            'gpt-context-maker = gptcontextbuilder.main:main_cli',
         ],
     },
     install_requires=[
