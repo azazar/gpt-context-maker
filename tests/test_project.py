@@ -1,7 +1,7 @@
 import unittest
 import os
 from pathlib import Path
-from modules import file_reader, comment_filter, token_counter, code_summarizer, context_reducer, prompt_generator
+from gptcontextbuilder import file_reader, comment_filter, token_counter, code_summarizer, prompt_generator
 
 
 class TestProject(unittest.TestCase):
@@ -38,17 +38,6 @@ class TestProject(unittest.TestCase):
             print(f"Tokens after comment removal: {tokens}")
             if "# This is a sample python file" in file_content or "// This is a sample comment" in file_content or "/* This is a sample comment */" in file_content:  # Add a check here
                 self.assertGreater(original_tokens, tokens)
-
-    def test_context_reducer(self):
-        summaries = [{"file_content": file.read_text(), "variables": [], "functions": [], "classes": [], "extra_code": []}
-                     for file in file_reader.read_all_code_files(self.project_path)]
-        reduced_context = context_reducer.reduce_context(summaries)
-        self.assertTrue(len(reduced_context) > 0)
-
-        # Test if the reduced context has fewer tokens than the original context
-        original_tokens = sum(token_counter.count_tokens(summary["file_content"]) for summary in summaries)
-        reduced_tokens = sum(token_counter.count_tokens(summary["file_content"]) for summary in reduced_context)
-        self.assertLessEqual(reduced_tokens, original_tokens)
 
     def test_prompt_generator(self):
         summaries = [{"filename": str(file), "file_content": file.read_text(), "variables": [], "functions": [], "classes": [
