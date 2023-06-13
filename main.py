@@ -2,7 +2,7 @@ import argparse
 import pyperclip
 import yaml
 import os
-from modules import file_reader, code_summarizer, comment_filter, token_counter, context_reducer, prompt_generator, space_to_tab_converter
+from modules import file_reader, code_summarizer, comment_filter, token_counter, prompt_generator, space_to_tab_converter
 
 MAX_TOKENS = 3072
 DEFAULT_REQUIREMENTS = """
@@ -24,9 +24,20 @@ DEFAULT_REQUIREMENTS = """
 """.strip()
 
 
-def generate_prompt_and_count_tokens(context, prepend_text=""):
-    prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
-    prompt = (prepend_text.strip() + "\n\n" + "\n".join(prompts)).strip()
+def generate_prompt_and_count_tokens(context, prepend_text="", removed_filenames=None):
+    if len(context) == 0:
+        prompt = prepend_text.strip()
+
+        if removed_filenames is not None:
+            prompt = prompt + "\n\n# Project Files\n\nAsk user to provide file contents when necessary\n\n- " + "\n -".join(removed_filenames)
+    else:
+        prompts = [prompt_generator.create_prompt_from_context(summary) for summary in context]
+
+        prompt = (prepend_text.strip() + "\n\n" + "\n".join(prompts)).strip()
+
+        if removed_filenames is not None:
+            prompt = prompt + "\n\n# Other Project Files not included\n\nAsk user file contents if necessary\n\n- " + "\n -".join(removed_filenames)
+
     return prompt, token_counter.count_tokens(prompt)
 
 
@@ -91,12 +102,20 @@ def main(project_path=".", max_tokens=MAX_TOKENS, exclude_dirs=None, include_key
             if total_tokens <= max_tokens:
                 return prompt, total_tokens
 
+    removed_filenames = []
+
     # Step 4: If context still doesn't fit, reduce context as a last resort
-    if total_tokens > max_tokens:
-        context = context_reducer.reduce_context(context, max_tokens)
+    while len(context) > 0:
+        c = context[0]
+        context = context[1:]
+        removed_filenames.append(c['filename'])
+
+        prompt, total_tokens = generate_prompt_and_count_tokens(context, prepend_text, removed_filenames)
+        if total_tokens <= max_tokens:
+            return prompt, total_tokens
 
     # Generate the final prompts
-    prompt, total_tokens = generate_prompt_and_count_tokens(context, prepend_text)
+    prompt, total_tokens = generate_prompt_and_count_tokens(context, prepend_text, removed_filenames)
 
     return prompt, total_tokens
 
