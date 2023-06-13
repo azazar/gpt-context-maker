@@ -9,6 +9,9 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
+            "args": [
+                "--path", "${workspaceFolder}"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -18,6 +21,9 @@
             "python": "/usr/bin/python3",
             "request": "launch",
             "program": "~/.local/bin/gpt-context-maker",
+            "args": [
+                "--path", "${workspaceFolder}"
+            ],
             "console": "integratedTerminal",
             "justMyCode": false
         },
