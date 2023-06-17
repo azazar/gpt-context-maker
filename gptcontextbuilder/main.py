@@ -128,8 +128,8 @@ def main_cli():
     parser.add_argument('--copy', action='store_true', help='Copy the output to clipboard.')
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens for the context.')
     parser.add_argument('--exclude-dirs', default=None, help='Comma-separated list of directories to exclude.')
-    parser.add_argument('--include-keywords', default=None,
-                        help='Comma-separated list of keywords to filter included files.')
+    parser.add_argument('--include-keywords', nargs='*', default=None,
+                        help='Only include files that contain these keywords in their path. If omitted, all files will be included.')
     parser.add_argument('--prompt', default=None, help='Text to prepend to the generated context.')
     parser.add_argument('--requirements', default=None, help='Text to append to the generated context.')
     args = parser.parse_args()
